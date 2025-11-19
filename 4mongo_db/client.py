@@ -66,7 +66,7 @@ for doc in products.aggregate(pipeline):
 # (-1 = DESC, 1 = ASC)
 
 
-print("\n🔄 Undate price")
+print("\n🔄 Update price")
 products.update_one({"name": "Guinness Draught"}, {"$set": {"price": 2.99}})
 pprint(products.find_one({"name": "Guinness Draught"}))
 
