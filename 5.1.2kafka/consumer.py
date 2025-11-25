@@ -1,6 +1,8 @@
 from kafka import KafkaConsumer
 import psycopg2
 import json
+import signal
+import sys
 
 consumer = KafkaConsumer(
     "user_events",
@@ -25,6 +27,17 @@ CREATE TABLE IF NOT EXISTS user_logins (
 )
 """)
 conn.commit()
+
+def graceful_shutdown(signum, frame):
+    print("\nShutting down...")
+    consumer.close()
+    cursor.close()
+    conn.close()
+    print("Consumer + DB closed.")
+    sys.exit(0)
+
+signal.signal(signal.SIGINT, graceful_shutdown)
+signal.signal(signal.SIGTERM, graceful_shutdown)
 
 for message in consumer:
     data = message.value
